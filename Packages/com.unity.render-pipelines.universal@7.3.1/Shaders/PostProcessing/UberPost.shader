@@ -46,6 +46,7 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
         float4 _Grain_TilingParams;
         float4 _Bloom_Texture_TexelSize;
         float4 _Dithering_Params;
+        float4 _ToneMappingParam; // ss
 
         #define DistCenter              _Distortion_Params1.xy
         #define DistAxis                _Distortion_Params1.zw
@@ -108,7 +109,15 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
 
             return uv;
         }
-
+        float3 ACESFilm(float3 x)
+        {
+            float a = _ToneMappingParam.x + 3.92000008;
+            float b = _ToneMappingParam.y + 0.0399999991;
+            float c = _ToneMappingParam.z + 2.6500001;
+            float d = _ToneMappingParam.w + 1.59000003;
+            float e = 0.140000001;
+            return saturate( (x*(a*x +b)) / (x* (c*x + d) + e));
+        }
         half4 Frag(Varyings input) : SV_Target
         {
             UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -200,7 +209,7 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
                 color = ApplyGrain(color, uv, TEXTURE2D_ARGS(_Grain_Texture, sampler_LinearRepeat), GrainIntensity, GrainResponse, GrainScale, GrainOffset);
             }
             #endif
-
+            color = ACESFilm(color);
             // Back to sRGB
             #if UNITY_COLORSPACE_GAMMA || _LINEAR_TO_SRGB_CONVERSION
             {
