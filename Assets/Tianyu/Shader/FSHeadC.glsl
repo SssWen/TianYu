@@ -191,25 +191,16 @@ mediump float u_xlat16_64;
 mediump float u_xlat16_66;
 void main()
 {
-	ImmCB_0_0_0[0] = vec2(0.0, 0.0);
-	ImmCB_0_0_0[1] = vec2(0.249529794, 0.732074976);
-	ImmCB_0_0_0[2] = vec2(-0.346920609, 0.643783629);
-	ImmCB_0_0_0[3] = vec2(-0.0187890902, 0.482739389);
-	ImmCB_0_0_0[4] = vec2(-0.272521287, 0.896188021);
-	ImmCB_0_0_0[5] = vec2(-0.681433618, 0.648048103);
-	ImmCB_0_0_0[6] = vec2(0.415204495, 0.279417187);
-	ImmCB_0_0_0[7] = vec2(0.1310554, 0.26759249);
-	ImmCB_0_0_0[8] = vec2(0.534474373, 0.562441111);
-	ImmCB_0_0_0[9] = vec2(0.838568926, 0.513734818);
-	ImmCB_0_0_0[10] = vec2(0.604505181, 0.0839385688);
-	ImmCB_0_0_0[11] = vec2(0.464316308, 0.868464172);
     u_xlat0.x = vs_TEXCOORD0.w;
     u_xlat0.y = vs_TEXCOORD1.w;
-    u_xlat0.z = vs_TEXCOORD2.w;
+    u_xlat0.z = vs_TEXCOORD2.w; 
+    // u_xlat0 = worldPos;
     u_xlat0.xyz = (-u_xlat0.xyz) + _WorldSpaceCameraPos.xyz;
     u_xlat54 = dot(u_xlat0.xyz, u_xlat0.xyz);
     u_xlat54 = inversesqrt(u_xlat54);
     u_xlat1.xyz = vec3(u_xlat54) * u_xlat0.xyz;
+    // u_xlat1 = viewDir = normalize(_WorldSpaceCameraPos - worldPos);
+
     u_xlat16_2.xy = texture(_FaceMaskTex, vs_TEXCOORD3.xy).xy;
     u_xlat16_3 = texture(_MainTex, vs_TEXCOORD3.xy);
     u_xlat16_4 = texture(_BumpMap, vs_TEXCOORD3.xy);
@@ -363,6 +354,9 @@ void main()
     u_xlat38 = u_xlat38 + -0.100000001;
     u_xlat16_55 = (-u_xlat16_5.x) * u_xlat16_55 + 1.0;
     u_xlat55 = (-u_xlat16_55) * u_xlat38 + 1.0;
+
+
+
     u_xlat16_11.xyz = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz;
     u_xlat16_5.x = dot(u_xlat16_12.xyz, u_xlat16_12.xyz);
     u_xlat16_5.x = inversesqrt(u_xlat16_5.x);
@@ -402,6 +396,9 @@ void main()
     u_xlat16_28.xyz = u_xlat16_28.xyz * _MainColor.xyz;
     u_xlat16_28.xyz = u_xlat16_28.xyz * vec3(0.25, 0.0, 0.0) + u_xlat16_29.xyz;
     u_xlat16_28.xyz = vec3(u_xlat55) * u_xlat16_28.xyz;
+
+
+
     u_xlat16_20.x = u_xlat16_11.x * 4.0;
     u_xlat16_20.x = u_xlat16_23.x * u_xlat16_20.x;
     u_xlat16_11.xyz = u_xlat0.xyz * vec3(u_xlat54) + _CharacterLightDir.xyz;
@@ -448,93 +445,11 @@ void main()
     u_xlat16_11.xyz = u_xlat16_4.www * u_xlat16_11.xyz;
     u_xlat16_23.x = u_xlat16_1.x * _SSSSpecParam.y;
     u_xlat16_11.xyz = u_xlat16_23.xxx * u_xlat16_6.yyy + u_xlat16_11.xyz;
-    u_xlat16_10.xyz = u_xlat16_7.xyz * u_xlat16_28.xyz;
-    u_xlat16_10.xyz = u_xlat16_11.xyz * vec3(u_xlat55) + u_xlat16_10.xyz;
-    u_xlat16_1.xyz = u_xlat16_7.xyz * vec3(0.300000012, 0.300000012, 0.300000012);
-    u_xlat16_0 = u_xlat16_3 * vec4(-0.325735003, 0.325735003, 0.325735003, -0.273137003);
-    u_xlat16_0.w = u_xlat16_3.x * u_xlat16_0.w;
-    u_xlat16_23.xy = u_xlat16_3.xw * vec2(-0.273137003, 0.273137003);
-    u_xlat16_55 = u_xlat16_3.y * u_xlat16_3.y;
-    u_xlat16_55 = u_xlat16_55 * 3.0 + -1.0;
-    u_xlat2.y = u_xlat16_55 * 0.0788479969;
-    u_xlat16_2.xz = u_xlat16_3.yy * u_xlat16_23.xy;
-    u_xlat16_23.x = u_xlat16_3.x * u_xlat16_3.x;
-    u_xlat16_23.x = u_xlat16_3.w * u_xlat16_3.w + (-u_xlat16_23.x);
-    u_xlat2.w = u_xlat16_23.x * 0.136568502;
-    u_xlat16_23.x = dot(u_xlat16_0, _VlmValues[0]);
-    u_xlat2.xz = u_xlat16_2.xz;
-    u_xlat16_41 = dot(u_xlat2, _VlmValues[1]);
-    u_xlat16_23.x = u_xlat16_41 + u_xlat16_23.x;
-    u_xlat16_7.x = _VlmValues[6].x * 0.282094985 + u_xlat16_23.x;
-    u_xlat16_23.x = dot(u_xlat16_0, _VlmValues[2]);
-    u_xlat16_41 = dot(u_xlat2, _VlmValues[3]);
-    u_xlat16_23.x = u_xlat16_41 + u_xlat16_23.x;
-    u_xlat16_7.y = _VlmValues[6].y * 0.282094985 + u_xlat16_23.x;
-    u_xlat16_23.x = dot(u_xlat16_0, _VlmValues[4]);
-    u_xlat16_41 = dot(u_xlat2, _VlmValues[5]);
-    u_xlat16_23.x = u_xlat16_41 + u_xlat16_23.x;
-    u_xlat16_7.z = _VlmValues[6].z * 0.282094985 + u_xlat16_23.x;
-    u_xlat16_11.xyz = u_xlat16_7.xyz * vec3(2.50999999, 2.50999999, 2.50999999) + vec3(0.0299999993, 0.0299999993, 0.0299999993);
-    u_xlat16_11.xyz = u_xlat16_7.xyz * u_xlat16_11.xyz;
-    u_xlat16_12.xyz = u_xlat16_7.xyz * vec3(2.43000007, 2.43000007, 2.43000007) + vec3(0.589999974, 0.589999974, 0.589999974);
-    u_xlat16_7.xyz = u_xlat16_7.xyz * u_xlat16_12.xyz + vec3(0.140000001, 0.140000001, 0.140000001);
-    u_xlat16_7.xyz = u_xlat16_11.xyz / u_xlat16_7.xyz;
-    u_xlat16_7.xyz = max(u_xlat16_7.xyz, vec3(0.0, 0.0, 0.0));
-    u_xlat16_7.xyz = u_xlat16_7.xyz * vec3(vec3(_VlmScale, _VlmScale, _VlmScale));
-    u_xlat16_1.xyz = u_xlat16_1.xyz * u_xlat16_7.xyz + u_xlat16_10.xyz;
-    u_xlat16_5.x = u_xlat16_5.x * u_xlat16_5.x;
-    u_xlat16_5.xyz = u_xlat16_5.xxx * _HighlightColor.xyz;
-    u_xlat16_5.xyz = u_xlat16_5.xyz * _HighlightColor.www + u_xlat16_1.xyz;
-    u_xlat16_1.x = u_xlat16_59 * 0.425000012;
-    u_xlat16_1.x = u_xlat16_59 * u_xlat16_1.x + u_xlat16_61;
-    u_xlat16_1.x = u_xlat16_1.x * u_xlat16_6.w;
-    u_xlat16_1.x = u_xlat16_1.x * _RimPower;
-    u_xlat16_5.xyz = u_xlat16_1.xxx * _RimColor.xyz + u_xlat16_5.xyz;
-    u_xlat16_1.x = texture(_AutoExposureTex, vec2(0.5, 0.5)).x;
-    u_xlat16_19 = _AutoExposure_Intensity + 1.0;
-    u_xlat16_37 = _AutoExposure_Intensity * -0.300000012 + 1.0;
-    u_xlat16_19 = float(1.0) / u_xlat16_19;
-    u_xlat16_37 = float(1.0) / u_xlat16_37;
-    u_xlat16_1.x = u_xlat16_1.x * 5.0;
-#ifdef UNITY_ADRENO_ES3
-    u_xlat16_1.x = min(max(u_xlat16_1.x, 0.0), 1.0);
-#else
-    u_xlat16_1.x = clamp(u_xlat16_1.x, 0.0, 1.0);
-#endif
-    u_xlat16_37 = (-u_xlat16_19) + u_xlat16_37;
-    u_xlat16_1.x = u_xlat16_1.x * u_xlat16_37 + u_xlat16_19;
-    u_xlat16_5.xyz = u_xlat16_1.xxx * u_xlat16_5.xyz;
-    u_xlat16_7.xyz = u_xlat16_5.xyz * vec3(vec3(_AutoExposure, _AutoExposure, _AutoExposure));
-    u_xlat16_59 = dot((-_WorldSpaceLightPos0.xyz), vs_TEXCOORD4.xyz);
-#ifdef UNITY_ADRENO_ES3
-    u_xlat16_59 = min(max(u_xlat16_59, 0.0), 1.0);
-#else
-    u_xlat16_59 = clamp(u_xlat16_59, 0.0, 1.0);
-#endif
-    u_xlat16_59 = u_xlat16_59 * u_xlat16_59;
-    u_xlat16_61 = (-vs_TEXCOORD4.y) * _FogInfo2.w + _FogInfo2.z;
-#ifdef UNITY_ADRENO_ES3
-    u_xlat16_61 = min(max(u_xlat16_61, 0.0), 1.0);
-#else
-    u_xlat16_61 = clamp(u_xlat16_61, 0.0, 1.0);
-#endif
-    u_xlat16_10.xyz = (-_FogColor1.xyz) + _FogColor2.xyz;
-    u_xlat16_10.xyz = vec3(u_xlat16_61) * u_xlat16_10.xyz + _FogColor1.xyz;
-    u_xlat16_61 = dot(u_xlat16_10.xyz, vec3(0.300000012, 0.589999974, 0.109999999));
-    u_xlat16_64 = vs_TEXCOORD4.w * _FogInfo4.x;
-    u_xlat16_11.xyz = vec3(u_xlat16_61) * _FogInfo4.yyy + (-u_xlat16_10.xyz);
-    u_xlat16_10.xyz = vec3(u_xlat16_64) * u_xlat16_11.xyz + u_xlat16_10.xyz;
-    u_xlat16_11.xyz = _FogInfo3.zzz * _FogColor3.xyz;
-    u_xlat16_10.xyz = u_xlat16_11.xyz * vec3(u_xlat16_59) + u_xlat16_10.xyz;
-    u_xlat16_1.x = (-vs_TEXCOORD4.w) + 1.0;
-    u_xlat16_1.xyz = u_xlat16_7.xyz * u_xlat16_1.xxx + u_xlat16_10.xyz;
-    u_xlat16_1.xyz = (-u_xlat16_5.xyz) * vec3(vec3(_AutoExposure, _AutoExposure, _AutoExposure)) + u_xlat16_1.xyz;
-    u_xlat16_1.xyz = vs_TEXCOORD4.www * u_xlat16_1.xyz + u_xlat16_7.xyz;
-    u_xlat16_55 = (-_DarkCharacterScale) * _DarkCharacterCtrl + 1.0;
-    u_xlat16_2.xyz = vec3(u_xlat16_55) * u_xlat16_1.xyz;
-    u_xlat16_5.x = (-u_xlat16_1.x) * u_xlat16_55 + 1.0;
-    SV_Target0.x = _OutputAlpha * u_xlat16_5.x + u_xlat16_2.x;
-    SV_Target0.yz = u_xlat16_2.yz;
+    vec3 specular = u_xlat16_11.xyz;
+    vec3 diffuse = u_xlat16_7.xyz * u_xlat16_28.xyz;
+    diffuse = specular * vec3(u_xlat55) + diffuse.xyz; // specular + diffuse;
+    SV_Target0.xyz = diffuse;
+
     SV_Target0.w = 1.0;
     return;
 }

@@ -229,7 +229,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin"
 
                 // viewDirection = SRGBToLinear(viewDirection);
                 // return float4(viewDirection,1.0);
-                float VdotL = saturate(dot(viewDirection, _CharacterLightDir.xyz));   
+                float VdotL = saturate(dot(viewDirection, _CharacterLightDir.xyz));
     // u_xlat16_19.x = dot(u_xlat0.xyz, _CharacterLightDir.xyz);
                 // VdotL = SRGBToLinear(VdotL);
                 // return float4(VdotL,VdotL,VdotL,1.0);
@@ -243,7 +243,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin"
                 // return float4(VdotN,VdotN,VdotN,1.0);
 
 
-                VdotN = max(VdotN, 0.200000003);                
+                VdotN = max(VdotN, 0.200000003);
                 float VdotN_1 = VdotN * 0.599999964 + 0.300000012;
 
                 float3 diffuse = float3(0,0,0);
@@ -259,7 +259,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin"
                 //  return float4(NdotL,NdotL,NdotL,1.0);
                 float3 SSSlut1 = tex2D(_SSSTex,float2(lutUVX,0) ).xyz;
                 // float3 SSSlut1 = tex2D(_SSSTex,float2(0.5,0) ).xyz;
-                // SSSlut1= pow(SSSlut1,2.2);                
+                // SSSlut1= pow(SSSlut1,2.2);
                 
                 float SkinControl = NdotL + 0.300000012;
                 SkinControl = min(SkinControl, 1.0);
