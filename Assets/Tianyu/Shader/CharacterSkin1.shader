@@ -226,7 +226,8 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 float3 worldPos = float3(i.TtoW0.w,i.TtoW1.w,i.TtoW2.w);
                 // float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos);
                 // Light light = GetMainLight();
-                float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos); // ?????
+                float3 worldCameraPos = float3(0.0,1.18,1.03);
+                float3 viewDirection = normalize(worldCameraPos - worldPos); // ?????
 
                 float2 FaceMaskTexColor = tex2D(_FaceMaskTex, i.uv.xy);
                 float4 mainTexColor = tex2D(_MainTex, i.uv.xy);//u_xlat16_3
@@ -286,9 +287,12 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 FacialControl = FacialControl * (_FacialParams.y - mainTexColor.w) + mainTexColor.w; // specularW
       
                 float VdotN = dot(viewDirection.xyz, worldNormal); // normal 改
-                
+                return float4(viewDirection,1);
+                return float4(VdotN,VdotN,VdotN,1);
                 float VdotNN = VdotN;
-                VdotNN = saturate(VdotNN);            
+                VdotNN = saturate(VdotNN);    
+                
+                        
                 // u_xlat16_5.x = 1.0 -VdotN;
                 // u_xlat16_5.w = (-u_xlat16_5.w) + 1.0;    
                 FacialControl = 1.0- FacialControl;
@@ -341,7 +345,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 
                 float EdgeControl = 0.05;
                 float SpecParam1 = min(F * 0.5, 6.0);
-return float4(SpecParam1,SpecParam1,SpecParam1,1);
+
                 
                 float edg = _ParamTexColor.z * EdgeControl * 0.899999976;
                 float t = 1.0 - _ParamTexColor.w;

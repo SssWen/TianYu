@@ -353,6 +353,11 @@ void main()
     // u_xlat16_5.x = dot(viewDirection.zyx, u_xlat16_3.xyw);
     // u_xlat16_5.x = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
     float VdotN = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
+
+  SV_Target0.xyz = vec3(VdotN,VdotN,VdotN);
+  SV_Target0.xyz = vec3(worldNormal);
+
+
     u_xlat16_41 = VdotN;
     float VdotNN = VdotN;
 #ifdef UNITY_ADRENO_ES3
@@ -482,7 +487,7 @@ void main()
     vec3 specular = SpecParam1 * _ParamTexColor.yyy + specularParam2;
     vec3 diffuse = diffuseParam1 * diffuseParma2;
     diffuse = specular  + diffuse; // specular + diffuse;
-    SV_Target0.xyz = diffuse;
+  
 
     SV_Target0.w = 1.0;
     return;
