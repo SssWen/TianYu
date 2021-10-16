@@ -155,7 +155,7 @@ void main()
     vs_TEXCOORD1.z = u_xlat3.y;
     vs_TEXCOORD2.w = u_xlat0.z;
     u_xlat0.xyz = (-u_xlat0.xyz) + _WorldSpaceCameraPos.xyz;
-    vs_TEXCOORD5.xyz = u_xlat0.xyz;
+    vs_TEXCOORD5.xyz = u_xlat0.xyz;// viewDir = _WorldSpaceCameraPos - worldPos;
     vs_TEXCOORD2.z = u_xlat3.w;
     u_xlat0.xy = in_TEXCOORD0.xy;
     u_xlat0.zw = in_TEXCOORD1.xy;

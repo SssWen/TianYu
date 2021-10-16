@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Tianyu/TianYu.unity
+    guid: 51d3c5b63b133b649b14d253435fa315
   m_configObjects: {}

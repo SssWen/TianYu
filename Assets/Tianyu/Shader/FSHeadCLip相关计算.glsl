@@ -190,40 +190,33 @@ mediump float u_xlat16_61;
 mediump float u_xlat16_64;
 mediump float u_xlat16_66;
 void main()
-{     
-    vec3 worldPos = vec3(vs_TEXCOORD0.w,vs_TEXCOORD1.w,vs_TEXCOORD2.w);
+{
+    u_xlat0.x = vs_TEXCOORD0.w;
+    u_xlat0.y = vs_TEXCOORD1.w;
+    u_xlat0.z = vs_TEXCOORD2.w; 
     // u_xlat0 = worldPos;
-    // u_xlat0.xyz = (-worldPos) + _WorldSpaceCameraPos.xyz;
-    vec3 viewDir = (-worldPos) + _WorldSpaceCameraPos.xyz;
-    //u_xlat0 =  _WorldSpaceCameraPos - worldPos;
-    u_xlat54 = dot(viewDir, viewDir);
+    u_xlat0.xyz = (-u_xlat0.xyz) + _WorldSpaceCameraPos.xyz;
+    u_xlat54 = dot(u_xlat0.xyz, u_xlat0.xyz);
     u_xlat54 = inversesqrt(u_xlat54);
-    u_xlat1.xyz = vec3(u_xlat54) * viewDir;
+    u_xlat1.xyz = vec3(u_xlat54) * u_xlat0.xyz;
     // u_xlat1 = viewDir = normalize(_WorldSpaceCameraPos - worldPos);
-    vec3 viewDirection = u_xlat1.xyz;
 
-    // u_xlat16_2.xy = texture(_FaceMaskTex, vs_TEXCOORD3.xy).xy;
-    vec2 FaceMaskTexColor = texture(_FaceMaskTex, vs_TEXCOORD3.xy).xy;
-    vec4 mainTexColor = texture(_MainTex, vs_TEXCOORD3.xy);//u_xlat16_3
-    // u_xlat16_4 = texture(_BumpMap, vs_TEXCOORD3.xy);
-    vec4 _BumpMapTex = texture(_BumpMap, vs_TEXCOORD3.xy);
-    vec4 Normal = _BumpMapTex;
-    Normal.xy = Normal.xy * vec2(2.0, 2.0) + vec2(-1.0, -1.0);//u_xlat16_5.xy
+    u_xlat16_2.xy = texture(_FaceMaskTex, vs_TEXCOORD3.xy).xy;
+    u_xlat16_3 = texture(_MainTex, vs_TEXCOORD3.xy);
+    u_xlat16_4 = texture(_BumpMap, vs_TEXCOORD3.xy);
+    u_xlat16_5.xy = u_xlat16_4.xy * vec2(2.0, 2.0) + vec2(-1.0, -1.0);
     vec4 _ParamTexColor = texture(_ParamTex, vs_TEXCOORD3.xy); //u_xlat16_6
- 
-    vec4 _ParamTex2Color = texture(_ParamTex2, vs_TEXCOORD3.xy);//u_xlat16_38 xw ???
-// #ifdef UNITY_ADRENO_ES3
-//     u_xlatb55 = !!(0.800000012<_FacialParams.z);
-// #else
-//     u_xlatb55 = 0.800000012<_FacialParams.z;
-// #endif
-//     u_xlat16_59 = (u_xlatb55) ? 0.0 : 1.0;    
-//     u_xlat16_59 = _ParamTex2Color.w * u_xlat16_59;
-
-    // vec3 mainColor = mainTexColor.xyz * _MainColor.xyz + (-mainTexColor.xyz);    
-    // mainColor = vec3(u_xlat16_59) * mainColor.xyz + mainTexColor.xyz;    // u_xlat16_59 = 0.0;
-    vec3 mainColor =  mainTexColor.xyz;
-
+    // x 黑白,孔,
+    u_xlat16_38.xy = texture(_ParamTex2, vs_TEXCOORD3.xy).xw;
+#ifdef UNITY_ADRENO_ES3
+    u_xlatb55 = !!(0.800000012<_FacialParams.z);
+#else
+    u_xlatb55 = 0.800000012<_FacialParams.z;
+#endif
+    u_xlat16_59 = (u_xlatb55) ? 0.0 : 1.0;
+    u_xlat16_59 = u_xlat16_38.y * u_xlat16_59;
+    u_xlat16_7.xyz = u_xlat16_3.xyz * _MainColor.xyz + (-u_xlat16_3.xyz);
+    u_xlat16_7.xyz = vec3(u_xlat16_59) * u_xlat16_7.xyz + u_xlat16_3.xyz;
 #ifdef UNITY_ADRENO_ES3
     u_xlatb55 = !!(vs_TEXCOORD3.z<0.5);
 #else
@@ -284,203 +277,177 @@ void main()
     u_xlat16_28.xyz = vec3(u_xlat16_59) * u_xlat16_28.xyz + vec3(1.0, 1.0, 1.0);
     u_xlat16_10.xyz = u_xlat16_10.xxx * u_xlat16_28.xyz + (-u_xlat16_9.xyz);
     u_xlat16_10.xyz = u_xlat16_9.www * u_xlat16_10.xyz + u_xlat16_9.xyz;
-    u_xlat16_59 = FaceMaskTexColor.y * _EyebrowHSV.w;
-    u_xlat16_10.xyz = (-mainColor.xyz) + u_xlat16_10.xyz;    
-    vec3 eyeBrow = vec3(u_xlat16_59) * u_xlat16_10.xyz;
-    vec3 diffuseParam1 = eyeBrow + mainColor;
+    u_xlat16_59 = u_xlat16_2.y * _EyebrowHSV.w;
+    u_xlat16_10.xyz = (-u_xlat16_7.xyz) + u_xlat16_10.xyz;
+    u_xlat16_7.xyz = vec3(u_xlat16_59) * u_xlat16_10.xyz + u_xlat16_7.xyz;
+
+    // vec3 viewDirection = normalize(vs_TEXCOORD5.xyz);
+//     vec3 worldNormal = vec3(vs_TEXCOORD0.z,vs_TEXCOORD1.z,vs_TEXCOORD2.z);
+//     float VdotN  = dot(viewDirection, worldNormal.xyz);
+// #ifdef UNITY_ADRENO_ES3
+//     VdotN = min(max(VdotN, 0.0), 1.0);
+// #else
+//     VdotN = clamp(VdotN, 0.0, 1.0);
+// #endif
+    // VdotN = saturate(VdotN);
+    // u_xlat16_61 = VdotN * VdotN;
+    // u_xlat16_61 = u_xlat16_61 * _LipCubeIntensity;
+    // u_xlat16_10.x = dot((-vs_TEXCOORD5.xyz), worldNormal.xyz);
+    // u_xlat16_10.x = u_xlat16_10.x + u_xlat16_10.x;
+    // u_xlat16_10.xyz = worldNormal.xyz * (-u_xlat16_10.xxx) + (-vs_TEXCOORD5.xyz);
+    // u_xlat55 = _FacialParams.y * -3.0 + 3.0;
+    // u_xlat16_3.xyz = textureLod(_Cube, u_xlat16_10.xyz, u_xlat55).xyz;
+    // u_xlat3.xyz = vec3(u_xlat16_59) * u_xlat16_3.xyz;
+// #ifdef UNITY_ADRENO_ES3
+//     u_xlatb55 = !!(_HDRTexEnable<0.5);
+// #else
+//     u_xlatb55 = _HDRTexEnable<0.5;
+// #endif
+    // u_xlat9.xyz = u_xlat3.xyz * vec3(0.25, 0.25, 0.25);
+    // u_xlat3.xyz = (bool(u_xlatb55)) ? u_xlat3.xyz : u_xlat9.xyz;
+    // u_xlat16_10.xyz = u_xlat3.xyz * vec3(u_xlat16_61);
+    // u_xlat16_10.xyz = u_xlat16_4.zzz * u_xlat16_10.xyz;    
+    // vec3 diffuseParam1 = u_xlat16_10.xyz * _FacialParams.xxx + u_xlat16_7.xyz;
+    vec3 diffuseParam1 =  u_xlat16_7.xyz;
 
     u_xlat16_10.xy = vs_TEXCOORD3.xy * _SSSPoreParam.xx;
     u_xlat16_10.xy = u_xlat16_10.xy * vec2(10.0, 10.0);
-    // u_xlat16_8 = texture(_PoreTex, u_xlat16_10.xy);
-    vec4 PoreTexColor = texture(_PoreTex, u_xlat16_10.xy);
-    // u_xlat16_10.xy = PoreTexColor.zw * vec2(2.0, 2.0) + vec2(-1.0, -1.0);
-    // u_xlat16_46.xy = PoreTexColor.xy + vec2(-1.0, -1.0);
-    // u_xlat16_46.xy = _BumpMapTex.ww * (PoreTexColor.xy + vec2(-1.0, -1.0)) + vec2(1.0, 1.0);
-    vec2 facePore = _BumpMapTex.ww * (PoreTexColor.xy + vec2(-1.0, -1.0)) + vec2(1.0, 1.0);
-    // u_xlat16_10.xy = (-Normal.xy) + u_xlat16_10.xy;
-    // u_xlat16_11.xy = u_xlat16_4.ww * u_xlat16_10.xy + Normal.xy; // 去掉眼角一些高光
-    // u_xlat16_11.xy =  Normal.xy;
-    // u_xlat16_11.z = 1.0;
-    Normal.z = 1.0;
-    u_xlat16_12.x = dot(vs_TEXCOORD0.xyz, Normal.xyz);//u_xlat16_11
-    u_xlat16_12.y = dot(vs_TEXCOORD1.xyz, Normal.xyz);
-    u_xlat16_12.z = dot(vs_TEXCOORD2.xyz, Normal.xyz);
-    // normal
-
-    // u_xlat16_59 = _BumpMapTex.z * _FacialParams.x;
-    float FacialControl = _BumpMapTex.z * _FacialParams.x;
-    // u_xlat16_61 = (-mainTexColor.w) + _FacialParams.y; // mainTex.w
-    // u_xlat16_5.w
-    FacialControl = FacialControl * (_FacialParams.y - mainTexColor.w) + mainTexColor.w; // specularW
+    u_xlat16_8 = texture(_PoreTex, u_xlat16_10.xy);
+    u_xlat16_10.xy = u_xlat16_8.zw * vec2(2.0, 2.0) + vec2(-1.0, -1.0);
+    u_xlat16_46.xy = u_xlat16_8.xy + vec2(-1.0, -1.0);
+    u_xlat16_46.xy = u_xlat16_4.ww * u_xlat16_46.xy + vec2(1.0, 1.0);
+    u_xlat16_10.xy = (-u_xlat16_5.xy) + u_xlat16_10.xy;
+    u_xlat16_11.xy = u_xlat16_4.ww * u_xlat16_10.xy + u_xlat16_5.xy;
+    u_xlat16_11.z = 1.0;
+    u_xlat16_12.x = dot(vs_TEXCOORD0.xyz, u_xlat16_11.xyz);
+    u_xlat16_12.y = dot(vs_TEXCOORD1.xyz, u_xlat16_11.xyz);
+    u_xlat16_12.z = dot(vs_TEXCOORD2.xyz, u_xlat16_11.xyz);
+    u_xlat16_59 = u_xlat16_4.z * _FacialParams.x;
+    u_xlat16_61 = (-u_xlat16_3.w) + _FacialParams.y; // mainTex.w
+    u_xlat16_5.w = u_xlat16_59 * u_xlat16_61 + u_xlat16_3.w;
     u_xlat16_5.z = 1.0;
-    Normal.z = 1.0;
-    u_xlat16_11.x = dot(vs_TEXCOORD0.xyz, Normal.xyz);// u_xlat16_5
-    u_xlat16_11.y = dot(vs_TEXCOORD1.xyz, Normal.xyz);
-    u_xlat16_11.z = dot(vs_TEXCOORD2.xyz, Normal.xyz);// dot(TtoW0,Normal)
-
+    u_xlat16_11.x = dot(vs_TEXCOORD0.xyz, u_xlat16_5.xyz);
+    u_xlat16_11.y = dot(vs_TEXCOORD1.xyz, u_xlat16_5.xyz);
+    u_xlat16_11.z = dot(vs_TEXCOORD2.xyz, u_xlat16_5.xyz);
     u_xlat16_55 = dot(u_xlat16_11.xyz, u_xlat16_11.xyz);
     u_xlat16_55 = inversesqrt(u_xlat16_55);
     u_xlat16_3 = vec4(u_xlat16_55) * u_xlat16_11.zyxx;
-    // normal = normalize(normal);
-    
 
-    // u_xlat16_5.x ????
+
+
+    // u_xlat16_5.x 头发阴影
     // u_xlat16_5.x = 1.0
     u_xlat16_5.x = 1.0;
     u_xlat16_23.x = (-_LightShadowData.x) + 1.0;
     u_xlat16_5.x = u_xlat16_5.x * u_xlat16_23.x + _LightShadowData.x;
-    
-
-    u_xlat16_23.x = dot(_CharacterLightDir.xyz, u_xlat16_3.zyx);//normal
-    float LdotN = dot(_CharacterLightDir.xyz, u_xlat16_3.zyx);//normal
-    // LdotN
-    // u_xlat16_23.x = dot(_CharacterLightDir.zyx, u_xlat16_3.xyw);
+    u_xlat16_55 = (-_VolumetricShadow) * 0.600000024 + 1.0;
+    u_xlat16_23.x = dot(_CharacterLightDir.zyx, u_xlat16_3.xyw);
 #ifdef UNITY_ADRENO_ES3
-    LdotN = min(max(LdotN, 0.0), 1.0);
+    u_xlat16_23.x = min(max(u_xlat16_23.x, 0.0), 1.0);
 #else
-    LdotN = clamp(LdotN, 0.0, 1.0);
+    u_xlat16_23.x = clamp(u_xlat16_23.x, 0.0, 1.0);
 #endif
-    // u_xlat20.xz = u_xlat16_23.xx * vec2(0.5, 0.600000024) + vec2(0.5, 0.200000003);        
-    vec2 lutXY = vec2(LdotN*0.5+0.5,0.0);
-    vec3 skinLightColor = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz; //u_xlat16_11
+    u_xlat20.xz = u_xlat16_23.xx * vec2(0.5, 0.600000024) + vec2(0.5, 0.200000003);
+    u_xlat16_38.x = u_xlat16_38.x * -0.399999976 + 1.0;
+    u_xlat38 = min(u_xlat16_38.x, u_xlat20.z);
+    u_xlat38 = u_xlat38 + 0.100000001;
+    u_xlat38 = max(u_xlat38, 0.0);
+    u_xlat38 = u_xlat38 + -0.100000001;
+    u_xlat16_55 = (-u_xlat16_5.x) * u_xlat16_55 + 1.0;
+    u_xlat55 = (-u_xlat16_55) * u_xlat38 + 1.0;
 
+    vec3 skinLightColor = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz; //u_xlat16_11
     u_xlat16_5.x = dot(u_xlat16_12.xyz, u_xlat16_12.xyz);
     u_xlat16_5.x = inversesqrt(u_xlat16_5.x);
     u_xlat16_12.xyz = u_xlat16_5.xxx * u_xlat16_12.xyz;
-    vec3 worldNormal = u_xlat16_12.xyz;
-    // u_xlat16_12 = worldNormal
-
-    // u_xlat16_5.x = dot(viewDirection.zyx, u_xlat16_3.xyw);
-    // u_xlat16_5.x = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
-    float VdotN = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
-    u_xlat16_41 = VdotN;
-    float VdotNN = VdotN;
+    u_xlat16_5.x = dot(u_xlat1.zyx, u_xlat16_3.xyw);
+    u_xlat16_41 = u_xlat16_5.x;
 #ifdef UNITY_ADRENO_ES3
-    VdotNN = min(max(VdotNN, 0.0), 1.0);
+    u_xlat16_41 = min(max(u_xlat16_41, 0.0), 1.0);
 #else
-    VdotNN = clamp(VdotNN, 0.0, 1.0);
+    u_xlat16_41 = clamp(u_xlat16_41, 0.0, 1.0);
 #endif
+    u_xlat16_5.xw = (-u_xlat16_5.xw) + vec2(1.0, 1.0);
+    u_xlat16_38.x = max(u_xlat16_5.w, 0.0500000007);
+    u_xlat16_38.x = min(u_xlat16_38.x, 1.0);
+    u_xlat16_59 = u_xlat16_38.x * -0.31099999;
+    u_xlat16_5.w = _ParamTexColor.w * u_xlat16_59 + u_xlat16_38.x;
+    u_xlat16_5.xw = u_xlat16_5.xw * u_xlat16_5.xw;
+    u_xlat16_4.x = u_xlat16_5.w * u_xlat16_5.w + 0.00999999978;
+    u_xlat16_14.xyz = u_xlat16_46.xxx * vec3(1.0, 0.5, 0.25);
+    u_xlat16_15.xyz = u_xlat16_46.yyy * vec3(0.0, 0.25, 0.300000012);
+    u_xlat16_59 = (-u_xlat16_41) + 1.0;
+    u_xlat16_61 = u_xlat16_59 * u_xlat16_59;
+    u_xlat16_13.xyz = (-u_xlat16_46.xxx) * vec3(1.0, 0.5, 0.25) + vec3(0.5, 0.5, 0.5);
+    u_xlat16_13.xyz = vec3(u_xlat16_61) * u_xlat16_13.xyz + u_xlat16_14.xyz;
+    u_xlat16_16.xyz = (-u_xlat16_46.yyy) * vec3(0.0, 0.25, 0.300000012) + vec3(0.5, 0.5, 0.5);
+    u_xlat16_16.xyz = vec3(u_xlat16_61) * u_xlat16_16.xyz + u_xlat16_15.xyz;
+    u_xlat16_10.x = _ParamTexColor.z * 0.636900008;
+    u_xlat20.z = 0.0;
 
-    u_xlat16_5.x = 1.0 -VdotN;
-    // u_xlat16_5.w = (-u_xlat16_5.w) + 1.0;    
-    FacialControl = 1.0- FacialControl;
-
-
-    FacialControl = max(FacialControl, 0.0500000007);
-    FacialControl = min(FacialControl, 1.0);
-    float roughness = _ParamTexColor.w * (FacialControl * -0.31099999) + FacialControl; //u_xlat16_38.x;
-    // u_xlat16_5.x = u_xlat16_5.x * u_xlat16_5.x;    
-    // u_xlat16_5.x = (1.0 - VdotN)*(1.0 - VdotN);
-    roughness = roughness * roughness;
-    float roughnessSqr = roughness * roughness + 0.00999999978;
-
-    vec3 facePore1 = facePore.x * vec3(1.0, 0.5, 0.25);
-    vec3 facePore2 = facePore.y * vec3(0.0, 0.25, 0.300000012);    
-    
-    float VdotNN2 = (1.0 - VdotN)*(1.0 - VdotN);
-    u_xlat16_13.xyz = (-facePore.x) * vec3(1.0, 0.5, 0.25) + vec3(0.5, 0.5, 0.5);
-    facePore1 = vec3(VdotNN2) * u_xlat16_13.xyz + facePore1;
-
-    u_xlat16_16.xyz = (-facePore.y) * vec3(0.0, 0.25, 0.300000012) + vec3(0.5, 0.5, 0.5);
-    // u_xlat16_16.xyz = vec3(VdotNN2) * u_xlat16_16.xyz + facePore2.xyz;
-    facePore2 = vec3(VdotNN2) * u_xlat16_16.xyz + facePore2.xyz;
-
-    float _ParamTexColorZ = _ParamTexColor.z * 0.636900008;//u_xlat16_10.x
-    // u_xlat20.z = 0.0; lutXY
-    vec3 SSSlut1 = texture(_SSSTex, lutXY).xyz;//u_xlat16_17
-    vec3 sssDiff = skinLightColor.xyz * vec3(2.0, 2.0, 2.0) + vec3(_ParamTexColorZ);    
-    sssDiff.xyz = _ParamTexColor.xxx * sssDiff.xyz; // 区域X
-    sssDiff.xyz = sssDiff.xyz * _SSSDiffParam.xxx;
-    
-    vec3 sssSkinColor1 = skinLightColor.xyz * _SSSDiffParam.yyy; // u_xlat16_29
-    // u_xlat16_66 = _ParamTexColorZ * _SSSDiffParam.w;
-    float _SSSDiffParamW = _ParamTexColorZ * _SSSDiffParam.w; //u_xlat16_66
-    sssSkinColor1.xyz = sssSkinColor1.xyz * SSSlut1.xyz + vec3(_SSSDiffParamW);
+    vec3 SSSlut1 = texture(_SSSTex, u_xlat20.xz).xyz;//u_xlat16_17
+    u_xlat16_28.xyz = skinLightColor.xyz * vec3(2.0, 2.0, 2.0) + u_xlat16_10.xxx;
+    u_xlat16_28.xyz = _ParamTexColor.xxx * u_xlat16_28.xyz;
+    u_xlat16_28.xyz = u_xlat16_28.xyz * _SSSDiffParam.xxx;
+    u_xlat16_29.xyz = skinLightColor.xyz * _SSSDiffParam.yyy;
+    u_xlat16_66 = u_xlat16_10.x * _SSSDiffParam.w;
+    u_xlat16_29.xyz = u_xlat16_29.xyz * SSSlut1.xyz + vec3(u_xlat16_66);
+    u_xlat16_28.xyz = u_xlat16_28.xyz * _CharacterSkinColorScale.xyz;
+    u_xlat16_28.xyz = u_xlat16_28.xyz * _MainColor.xyz;
+    u_xlat16_28.xyz = u_xlat16_28.xyz * vec3(0.25, 0.0, 0.0) + u_xlat16_29.xyz;
+    u_xlat16_28.xyz = vec3(u_xlat55) * u_xlat16_28.xyz;
+    vec3 diffuseParma2 = u_xlat16_28.xyz;
 
 
-
-
-    sssDiff.xyz = sssDiff.xyz * _CharacterSkinColorScale.xyz;
-    sssDiff.xyz = sssDiff.xyz * _MainColor.xyz;
-    sssDiff.xyz = sssDiff.xyz * vec3(0.25, 0.0, 0.0) + sssSkinColor1;
-    vec3 diffuseParma2 = sssDiff.xyz;
-
-
-    float skinLightColorX = skinLightColor.x * 4.0;
-    skinLightColorX = LdotN * skinLightColorX;
-    // u_xlat16_11.xyz = viewDir * vec3(u_xlat54) + _CharacterLightDir.xyz;
-    u_xlat16_11.xyz = viewDirection + _CharacterLightDir.xyz;
-//  H = viewDirection + _CharacterLightDir.xyz;
-
+    u_xlat16_20.x = skinLightColor.x * 4.0;
+    u_xlat16_20.x = u_xlat16_23.x * u_xlat16_20.x;
+    u_xlat16_11.xyz = u_xlat0.xyz * vec3(u_xlat54) + _CharacterLightDir.xyz;
     u_xlat16_23.x = dot(u_xlat16_11.xyz, u_xlat16_11.xyz);
     u_xlat16_23.x = inversesqrt(u_xlat16_23.x);
-    vec3 H = u_xlat16_23.xxx * u_xlat16_11.xyz;
-    // H = normalize(H);    
-
-
-    float NdotH = dot(H, worldNormal.xyz);// u_xlat16_12
-    float VdotH = dot(H, viewDirection.xyz);            
-    float Distribution = NdotH * NdotH * (roughnessSqr - 1.0) + 1.0;
-    // u_xlat16_0.x = Distribution * Distribution
-    Distribution = Distribution * Distribution;
-
-    Distribution = max(Distribution, 9.99999975e-05);
-
-    
-    float power = ((-5.55473 * VdotH) - 6.98316) * VdotH;    
-    float SpecularColor = 0.0399999991;    
-    float SphericalGaussianFresnelFunction = exp2(power) * (1.0-SpecularColor) + SpecularColor;
-    
-    float TrowbridgeReitzNormalDistribution = roughnessSqr / (Distribution * 3.14159298);//SpecularDistribution
-    float F = 0.25 * SphericalGaussianFresnelFunction * TrowbridgeReitzNormalDistribution;        
-    F = skinLightColorX * F;
-
-    // u_xlat16_0 = FacialControl * vec4(-1.0, -0.0274999999, -0.572000027, 0.0219999999) + vec4(1.0, 0.0425000004, 1.03999996, -0.0399999991);
-    
-    u_xlat16_0.x = FacialControl * -1.0 + 1.0;
-    u_xlat16_0.y = FacialControl *  -0.0274999999 + 0.0425000004;
-    u_xlat16_0.z = FacialControl *  -0.572000027 + 1.03999996;
-    u_xlat16_0.w = FacialControl *  0.0219999999 - 0.0399999991;
-
+    u_xlat16_11.xyz = u_xlat16_23.xxx * u_xlat16_11.xyz;
+    u_xlat16_23.x = dot(u_xlat16_11.xyz, u_xlat16_12.xyz);
+    u_xlat16_11.x = dot(u_xlat16_11.xyz, u_xlat1.xyz);
+    u_xlat16_0.x = u_xlat16_23.x * u_xlat16_4.x + (-u_xlat16_23.x);
+    u_xlat16_0.x = u_xlat16_0.x * u_xlat16_23.x + 1.0;
+    u_xlat16_0.x = u_xlat16_0.x * u_xlat16_0.x;
+    u_xlat0.x = max(u_xlat16_0.x, 9.99999975e-05);
+    u_xlat16_18 = u_xlat16_11.x * -5.55472994 + -6.98316002;
+    u_xlat16_18 = u_xlat16_11.x * u_xlat16_18;
+    u_xlat16_18 = exp2(u_xlat16_18);
+    u_xlat0.y = u_xlat16_18 * 0.959999979 + 0.0399999991;
+    u_xlat0.xy = u_xlat0.xy * vec2(3.14159298, 0.25);
+    u_xlat0.x = u_xlat16_4.x / u_xlat0.x;
+    u_xlat0.x = u_xlat0.y * u_xlat0.x;
+    u_xlat16_23.x = u_xlat16_20.x * u_xlat0.x;
+    u_xlat16_0 = u_xlat16_38.xxxx * vec4(-1.0, -0.0274999999, -0.572000027, 0.0219999999) + vec4(1.0, 0.0425000004, 1.03999996, -0.0399999991);
     u_xlat16_11.x = u_xlat16_0.x * u_xlat16_0.x;
-    u_xlat16_1.x = VdotNN * -9.27999973;
+    u_xlat16_1.x = u_xlat16_41 * -9.27999973;
     u_xlat16_1.x = exp2(u_xlat16_1.x);
     u_xlat16_1.x = min(u_xlat16_1.x, u_xlat16_11.x);
     u_xlat16_1.x = u_xlat16_1.x * u_xlat16_0.x + u_xlat16_0.y;
     u_xlat16_1.xy = u_xlat16_1.xx * vec2(-1.03999996, 1.03999996) + u_xlat16_0.zw;
-    u_xlat16_41 = u_xlat16_1.x * 0.0399999991 + u_xlat16_1.y;    
+    u_xlat16_41 = u_xlat16_1.x * 0.0399999991 + u_xlat16_1.y;
+    u_xlat16_1.x = u_xlat16_23.x * 0.5;
+    u_xlat16_1.x = min(u_xlat16_1.x, 6.0);
+    u_xlat16_23.x = u_xlat16_41 * 0.899999976;
+    u_xlat16_23.x = _ParamTexColor.z * u_xlat16_23.x;
+    u_xlat16_11.x = (-_ParamTexColor.w) + 1.0;
+    u_xlat16_11.xyz = u_xlat16_16.xyz * _ParamTexColor.www + u_xlat16_11.xxx;
+    u_xlat16_11.xyz = u_xlat16_23.xxx * u_xlat16_11.xyz;
+    u_xlat16_23.x = dot(u_xlat16_10.xxx, vec3(0.300000012, 0.589999974, 0.109999999));
+    u_xlat16_41 = u_xlat16_10.x * u_xlat16_41;
+    u_xlat16_12.xyz = u_xlat16_13.xyz * vec3(u_xlat16_41);
+    u_xlat16_20.xyz = u_xlat16_12.xyz * vec3(15.0, 15.0, 15.0);
+    u_xlat16_20.xyz = _ParamTexColor.www * u_xlat16_20.xyz;
+    u_xlat16_11.xyz = u_xlat16_11.xyz * u_xlat16_23.xxx + u_xlat16_20.xyz;
+    u_xlat16_11.xyz = u_xlat16_11.xyz * _SSSSpecParam.www;
+    u_xlat16_11.xyz = u_xlat16_2.xxx * (-u_xlat16_11.xyz) + u_xlat16_11.xyz;
+    u_xlat16_11.xyz = u_xlat16_4.www * u_xlat16_11.xyz;
+    u_xlat16_23.x = u_xlat16_1.x * _SSSSpecParam.y;    
 
-    u_xlat16_41 = 0.05;
-    float EdgeControl = u_xlat16_41;
-    float SpecParam1 = min(F * 0.5, 6.0);
-
-    
-    u_xlat16_23.x = _ParamTexColor.z * EdgeControl * 0.899999976;
-    float t = 1.0 - _ParamTexColor.w;
-    // u_xlat16_11.xyz = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
-    vec3 specColorL = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
-    specColorL.xyz = u_xlat16_23.xxx * specColorL.xyz;
-
-
-    float lum = dot(vec3(_ParamTexColorZ,_ParamTexColorZ,_ParamTexColorZ), vec3(0.300000012, 0.589999974, 0.109999999));
-    
-    EdgeControl = _ParamTexColorZ * EdgeControl;
-
-    vec3 faceEdgeC = facePore1 * vec3(EdgeControl);
-    faceEdgeC = faceEdgeC * vec3(15.0, 15.0, 15.0);
-    faceEdgeC = _ParamTexColor.www * faceEdgeC;
-    
-    vec3 specLerp = specColorL.xyz * lum + faceEdgeC.xyz;
-    specLerp = specLerp*_SSSSpecParam.w;    
-    specLerp = specLerp*(1.0 - FaceMaskTexColor.x);
-
-    vec3 specularParam2 = _BumpMapTex.www * specLerp;
-
-    SpecParam1 = SpecParam1 * _SSSSpecParam.y;    
-
-    vec3 specular = SpecParam1 * _ParamTexColor.yyy + specularParam2;
+    vec3 specular = u_xlat16_23.xxx * _ParamTexColor.yyy + u_xlat16_11.xyz;
     vec3 diffuse = diffuseParam1 * diffuseParma2;
-    diffuse = specular  + diffuse; // specular + diffuse;
+    diffuse = specular * vec3(u_xlat55) + diffuse.xyz; // specular + diffuse;
     SV_Target0.xyz = diffuse;
 
     SV_Target0.w = 1.0;
