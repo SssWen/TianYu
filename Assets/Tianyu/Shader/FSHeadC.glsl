@@ -289,10 +289,10 @@ void main()
     vec3 eyeBrow = vec3(u_xlat16_59) * u_xlat16_10.xyz;
     vec3 diffuseParam1 = eyeBrow + mainColor;
 
-    u_xlat16_10.xy = vs_TEXCOORD3.xy * _SSSPoreParam.xx;
-    u_xlat16_10.xy = u_xlat16_10.xy * vec2(10.0, 10.0);
+    vec2 poreUV  = vs_TEXCOORD3.xy * _SSSPoreParam.xx;
+    poreUV = poreUV * vec2(10.0, 10.0);
     // u_xlat16_8 = texture(_PoreTex, u_xlat16_10.xy);
-    vec4 PoreTexColor = texture(_PoreTex, u_xlat16_10.xy);
+    vec4 PoreTexColor = texture(_PoreTex, poreUV);
     // u_xlat16_10.xy = PoreTexColor.zw * vec2(2.0, 2.0) + vec2(-1.0, -1.0);
     // u_xlat16_46.xy = PoreTexColor.xy + vec2(-1.0, -1.0);
     // u_xlat16_46.xy = _BumpMapTex.ww * (PoreTexColor.xy + vec2(-1.0, -1.0)) + vec2(1.0, 1.0);
@@ -381,9 +381,9 @@ void main()
     u_xlat16_13.xyz = (-facePore.x) * vec3(1.0, 0.5, 0.25) + vec3(0.5, 0.5, 0.5);
     facePore1 = vec3(VdotNN2) * u_xlat16_13.xyz + facePore1;
 
-    u_xlat16_16.xyz = (-facePore.y) * vec3(0.0, 0.25, 0.300000012) + vec3(0.5, 0.5, 0.5);
+    vec3 tttt = (-facePore.y) * vec3(0.0, 0.25, 0.300000012) + vec3(0.5, 0.5, 0.5);
     // u_xlat16_16.xyz = vec3(VdotNN2) * u_xlat16_16.xyz + facePore2.xyz;
-    facePore2 = vec3(VdotNN2) * u_xlat16_16.xyz + facePore2.xyz;
+    facePore2 = vec3(VdotNN2) * tttt + facePore2.xyz;
 
     float _ParamTexColorZ = _ParamTexColor.z * 0.636900008;//u_xlat16_10.x
     // u_xlat20.z = 0.0; lutXY
@@ -454,12 +454,13 @@ void main()
     float EdgeControl = u_xlat16_41;
     float SpecParam1 = min(F * 0.5, 6.0);
 
+
     
-    u_xlat16_23.x = _ParamTexColor.z * EdgeControl * 0.899999976;
+    float edg = _ParamTexColor.z * EdgeControl * 0.899999976;
     float t = 1.0 - _ParamTexColor.w;
     // u_xlat16_11.xyz = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
     vec3 specColorL = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
-    specColorL.xyz = u_xlat16_23.xxx * specColorL.xyz;
+    specColorL.xyz = edg * specColorL.xyz;
 
 
     float lum = dot(vec3(_ParamTexColorZ,_ParamTexColorZ,_ParamTexColorZ), vec3(0.300000012, 0.589999974, 0.109999999));

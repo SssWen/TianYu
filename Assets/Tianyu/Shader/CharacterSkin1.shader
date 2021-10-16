@@ -12,6 +12,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
         // _StencilRef ("__stencil_ref", Float) = 0
         // [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2
         _SSSTex ("SSSTex", 2D) =  "white" { }
+        
         _MainColor ("Main Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" { }
         _BumpMap ("Normal", 2D) = "bump" { }
@@ -41,7 +42,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
         // _MainColorMask ("MainColorMask", 2D) = "white" { }
         // _EyebrowTilingOffset ("EyebrowTilingOffset", Vector) = (1,1,0,0)
         // _EyebrowHSV ("Eyebrow HSV", Vector) = (0,0,1,0)
-        _FacialParams ("FacialParams x: LipSmoothnessFromNormal y: FacialLipSmoothness z: BlockMainColor, w: DecalEnableMask", Vector) = (0,0.5,0,1)
+        _FacialParams ("FacialParams x: LipSmoothnessFromNormal y: FacialLipSmoothness z: BlockMainColor, w: DecalEnableMask", Vector) = (1.0,0.665,1.0,1.0)
         // [Header(Decal)] _DecalTex ("Decal Tex", 2D) = "black" { }
         // _DecalNormalTex ("Decal Normal Tex", 2D) = "black" { }
         // _DecalTypePara ("Decal Para", Vector) = (1,1,1,0)
@@ -167,6 +168,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             float4 _RimColorGame;
             float _RimPowerGame;
             float4 _SSSDiffParam;
+            float4 _SSSPoreParam;
 
 
             sampler2D _FaceMaskTex;
@@ -177,6 +179,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             sampler2D _EyebrowMask;
             sampler2D _DecalTex;
             sampler2D _SSSTex;
+            sampler2D _PoreTex;
             sampler2D _StarMask;
             sampler2D _AutoExposureTex;
                                 
@@ -218,21 +221,29 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             }
             float4 frag (v2f i) : SV_Target
             {                 
-       
+                
                 _SSSDiffParam = float4(1.50,1.15,0,0.4);
                 float3 worldPos = float3(i.TtoW0.w,i.TtoW1.w,i.TtoW2.w);
                 // float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos);
-                Light light = GetMainLight();
-                float3 viewDirection = normalize(light.direction - worldPos);
-                
-                float4 mainTexColor = tex2D(_MainTex, i.uv.xy);//u_xlat16_3    
-                
+                // Light light = GetMainLight();
+                float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos); // ?????
+
+                float2 FaceMaskTexColor = tex2D(_FaceMaskTex, i.uv.xy);
+                float4 mainTexColor = tex2D(_MainTex, i.uv.xy);//u_xlat16_3
+                float4 Normal = tex2D(_BumpMap, i.uv.xy); //xy normal, z mask w mask
+                float4 _BumpMapTex = Normal;
+
+                _SSSPoreParam.x = 1.5;
+                float2 poreUV  = i.uv.xy * _SSSPoreParam.x;
+                poreUV = poreUV * float2(10.0, 10.0);
+                float4 PoreTexColor = tex2D(_PoreTex, poreUV);
+                float2 facePore = _BumpMapTex.ww * (PoreTexColor.xy + float2(-1.0, -1.0)) + float2(1.0, 1.0);
                 float4 _ParamTexColor = tex2D(_ParamTex, i.uv.xy); //u_xlat16_6
             
                 float4 _ParamTex2Color = tex2D(_ParamTex2, i.uv.xy);//u_xlat16_38 xw ???
                 float3 mainColor =  mainTexColor.xyz;
 
-                float4 Normal = tex2D(_BumpMap, i.uv.xy); //xy normal, z mask w mask
+             
                 Normal.xy = Normal.xy * float2(2.0, 2.0) + float2(-1.0, -1.0);
                 float3 normal_1 = float3(Normal.xy,1.0);                
                 float3 worldNormal = normalize(half3(dot(i.TtoW0.xyz, normal_1), dot(i.TtoW1.xyz, normal_1), dot(i.TtoW2.xyz, normal_1)));
@@ -267,8 +278,98 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 
                 float3 diffuse = diffuseParam1 * diffuseParma2;
                 // diffuse = specular * float3(u_xlat55) + diffuse; // specular + diffuse;
-            
-                return float4(diffuse,1);
+
+// --------------------------Specular + diffuse ------------------------------
+                _FacialParams = float4(1.0,0.665,1.0,1.0);
+                float FacialControl = _BumpMapTex.z * _FacialParams.x;
+                                
+                FacialControl = FacialControl * (_FacialParams.y - mainTexColor.w) + mainTexColor.w; // specularW
+      
+                float VdotN = dot(viewDirection.xyz, worldNormal); // normal 改
+                
+                float VdotNN = VdotN;
+                VdotNN = saturate(VdotNN);            
+                // u_xlat16_5.x = 1.0 -VdotN;
+                // u_xlat16_5.w = (-u_xlat16_5.w) + 1.0;    
+                FacialControl = 1.0- FacialControl;
+
+
+                FacialControl = max(FacialControl, 0.0500000007);
+                FacialControl = min(FacialControl, 1.0);
+                float roughness = _ParamTexColor.w * (FacialControl * -0.31099999) + FacialControl; //u_xlat16_38.x;
+                // u_xlat16_5.x = u_xlat16_5.x * u_xlat16_5.x;    
+                // u_xlat16_5.x = (1.0 - VdotN)*(1.0 - VdotN);
+                roughness = roughness * roughness;
+                float roughnessSqr = roughness * roughness + 0.00999999978;
+
+
+                float3 facePore1 = facePore.x * float3(1.0, 0.5, 0.25);
+                float3 facePore2 = facePore.y * float3(0.0, 0.25, 0.300000012);    
+                
+                float VdotNN2 = (1.0 - VdotN)*(1.0 - VdotN);
+                float3 faceP = (-facePore.x) * float3(1.0, 0.5, 0.25) + float3(0.5, 0.5, 0.5);
+                facePore1 = VdotNN2 * faceP + facePore1;
+
+                float3 tttt = (-facePore.y) * float3(0.0, 0.25, 0.300000012) + float3(0.5, 0.5, 0.5);                
+                facePore2 = VdotNN2 * tttt + facePore2.xyz;
+
+
+
+                float H = viewDirection + _CharacterLightDir.xyz;
+                H = normalize(H);
+                float NdotH = dot(H, worldNormal.xyz);// u_xlat16_12
+                float VdotH = dot(H, viewDirection.xyz);
+                float Distribution = NdotH * NdotH * (roughnessSqr - 1.0) + 1.0;
+                // u_xlat16_0.x = Distribution * Distribution
+                Distribution = Distribution * Distribution;
+                Distribution = max(Distribution, 9.99999975e-05);
+
+                
+                float power = ((-5.55473 * VdotH) - 6.98316) * VdotH;    
+                float SpecularColor = 0.0399999991;    
+                float SphericalGaussianFresnelFunction = exp2(power) * (1.0-SpecularColor) + SpecularColor;
+                
+                float TrowbridgeReitzNormalDistribution = roughnessSqr / (Distribution * 3.14159298);//SpecularDistribution
+                float F = 0.25 * SphericalGaussianFresnelFunction * TrowbridgeReitzNormalDistribution;        
+
+
+                float skinLightColorX = skinLightColor.x * 4.0;
+                skinLightColorX = LdotN * skinLightColorX;
+                F = skinLightColorX * F;
+
+
+                
+                float EdgeControl = 0.05;
+                float SpecParam1 = min(F * 0.5, 6.0);
+return float4(SpecParam1,SpecParam1,SpecParam1,1);
+                
+                float edg = _ParamTexColor.z * EdgeControl * 0.899999976;
+                float t = 1.0 - _ParamTexColor.w;
+                
+                float3 specColorL = facePore2 * _ParamTexColor.www + float3(t,t,t); // u_xlat16_11.xxx;
+                specColorL.xyz = edg * specColorL.xyz;
+
+
+                float lum = dot(float3(_ParamTexColorZ,_ParamTexColorZ,_ParamTexColorZ), float3(0.300000012, 0.589999974, 0.109999999));
+                
+                EdgeControl = _ParamTexColorZ * EdgeControl;
+
+                float3 faceEdgeC = facePore1 * EdgeControl;
+                faceEdgeC = faceEdgeC * float3(15.0, 15.0, 15.0);
+                faceEdgeC = _ParamTexColor.www * faceEdgeC;
+                
+                float3 specLerp = specColorL.xyz * lum + faceEdgeC.xyz;
+                specLerp = specLerp*_SSSSpecParam.w;    
+                specLerp = specLerp*(1.0 - FaceMaskTexColor.x);
+
+                float3 specularParam2 = _BumpMapTex.www * specLerp;
+
+                SpecParam1 = SpecParam1 * _SSSSpecParam.y;    
+
+                float3 specular = SpecParam1 * _ParamTexColor.yyy ;//+ specularParam2;                
+                
+                diffuse =  specular;
+                return float4(specular,1);
                 
             }
             ENDHLSL
