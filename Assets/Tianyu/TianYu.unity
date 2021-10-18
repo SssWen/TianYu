@@ -144,13 +144,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187944722}
-  m_LocalRotation: {x: 0.53878313, y: -0.5673025, z: -0.42888907, w: 0.45159143}
-  m_LocalPosition: {x: -0.2918381, y: 0.874, z: -0.055307817}
+  m_LocalRotation: {x: 0.53878313, y: -0.5673026, z: -0.42888907, w: 0.45159143}
+  m_LocalPosition: {x: 0.15773723, y: 0.41394258, z: -0.74780667}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 704188515}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -102.95801, z: -87.046005}
 --- !u!1001 &704188514
 PrefabInstance:
@@ -197,7 +197,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 71bb79a7b833d4c418eab1dfb503e0ec,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 71bb79a7b833d4c418eab1dfb503e0ec,
         type: 3}
@@ -419,12 +419,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1074332464}
-  m_LocalRotation: {x: 0.0066756117, y: 0.9909443, z: -0.12281616, w: 0.05386219}
-  m_LocalPosition: {x: -0.44957548, y: 1.6400573, z: 1.7224976}
+  m_LocalRotation: {x: 0.006675571, y: 0.99094427, z: -0.122816205, w: 0.0538622}
+  m_LocalPosition: {x: 0, y: 1.18, z: 1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1074332468
 MonoBehaviour:
@@ -547,7 +547,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 44.135002, y: 224.7, z: 239.103}
 --- !u!1 &2121352811
 GameObject:
@@ -578,5 +578,5 @@ Transform:
   m_Children:
   - {fileID: 1020867269}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -102.95801, z: -87.046005}

@@ -354,8 +354,8 @@ void main()
     // u_xlat16_5.x = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
     float VdotN = dot(viewDirection.xyz, u_xlat16_3.zyx); // normal 改
 
-  SV_Target0.xyz = vec3(VdotN,VdotN,VdotN);
-  SV_Target0.xyz = vec3(worldNormal);
+
+  //SV_Target0.xyz = vec3(worldNormal);
 
 
     u_xlat16_41 = VdotN;
@@ -394,7 +394,7 @@ void main()
     // u_xlat20.z = 0.0; lutXY
     vec3 SSSlut1 = texture(_SSSTex, lutXY).xyz;//u_xlat16_17
     vec3 sssDiff = skinLightColor.xyz * vec3(2.0, 2.0, 2.0) + vec3(_ParamTexColorZ);    
-    sssDiff.xyz = _ParamTexColor.xxx * sssDiff.xyz; // 区域X
+    sssDiff.xyz = _ParamTexColor.xxx * sssDiff.xyz;
     sssDiff.xyz = sssDiff.xyz * _SSSDiffParam.xxx;
     
     vec3 sssSkinColor1 = skinLightColor.xyz * _SSSDiffParam.yyy; // u_xlat16_29
@@ -422,6 +422,7 @@ void main()
     vec3 H = u_xlat16_23.xxx * u_xlat16_11.xyz;
     // H = normalize(H);    
 
+//   SV_Target0.xyz = _WorldSpaceCameraPos;
 
     float NdotH = dot(H, worldNormal.xyz);// u_xlat16_12
     float VdotH = dot(H, viewDirection.xyz);            
@@ -459,26 +460,31 @@ void main()
     float EdgeControl = u_xlat16_41;
     float SpecParam1 = min(F * 0.5, 6.0);
 
-
+  
     
     float edg = _ParamTexColor.z * EdgeControl * 0.899999976;
     float t = 1.0 - _ParamTexColor.w;
     // u_xlat16_11.xyz = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
     vec3 specColorL = facePore2 * _ParamTexColor.www + vec3(t,t,t); // u_xlat16_11.xxx;
+
     specColorL.xyz = edg * specColorL.xyz;
 
 
     float lum = dot(vec3(_ParamTexColorZ,_ParamTexColorZ,_ParamTexColorZ), vec3(0.300000012, 0.589999974, 0.109999999));
-    
+
+
     EdgeControl = _ParamTexColorZ * EdgeControl;
 
     vec3 faceEdgeC = facePore1 * vec3(EdgeControl);
     faceEdgeC = faceEdgeC * vec3(15.0, 15.0, 15.0);
     faceEdgeC = _ParamTexColor.www * faceEdgeC;
-    
+
+
+
     vec3 specLerp = specColorL.xyz * lum + faceEdgeC.xyz;
     specLerp = specLerp*_SSSSpecParam.w;    
     specLerp = specLerp*(1.0 - FaceMaskTexColor.x);
+
 
     vec3 specularParam2 = _BumpMapTex.www * specLerp;
 
@@ -487,7 +493,8 @@ void main()
     vec3 specular = SpecParam1 * _ParamTexColor.yyy + specularParam2;
     vec3 diffuse = diffuseParam1 * diffuseParma2;
     diffuse = specular  + diffuse; // specular + diffuse;
-  
+
+  SV_Target0.xyz =diffuse ;
 
     SV_Target0.w = 1.0;
     return;
