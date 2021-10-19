@@ -229,10 +229,10 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 // Light light = GetMainLight();
                 float3 worldCameraPos = float3(0.0,1.18,1.03);
                 worldCameraPos = _WorldSpaceCameraPos.xyz;
-                float3 viewDirection = normalize(worldCameraPos - worldPos); // ?????
+                float3 viewDirection = normalize(worldCameraPos - worldPos); 
 
                 float2 FaceMaskTexColor = tex2D(_FaceMaskTex, i.uv.xy);
-                float4 mainTexColor = tex2D(_MainTex, i.uv.xy);//u_xlat16_3
+                float4 mainTexColor = tex2D(_MainTex, i.uv.xy);
                 float4 Normal = tex2D(_BumpMap, i.uv.xy); //xy normal, z mask w mask
                 float4 _BumpMapTex = Normal;
 
@@ -258,19 +258,19 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 float3 diffuseParam1 = eyeBrow + mainColor;
                 _CharacterSkinColorScale.xyz = float3(1,1,1);
                 _SSSLightColor.xyz = float3(0.99216,0.89412,0.8941);
-                float3 skinLightColor = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz; //u_xlat16_11
+                float3 skinLightColor = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz; 
             
-                float _ParamTexColorZ = _ParamTexColor.z * 0.636900008;//u_xlat16_10.x
+                float _ParamTexColorZ = _ParamTexColor.z * 0.636900008;
             
-                float3 SSSlut1 = tex2D(_SSSTex, lutXY).xyz;//u_xlat16_17
+                float3 SSSlut1 = tex2D(_SSSTex, lutXY).xyz;
                 float3 sssDiff = skinLightColor.xyz * float3(2.0, 2.0, 2.0) + float3(_ParamTexColorZ,_ParamTexColorZ,_ParamTexColorZ);    
-                sssDiff.xyz = _ParamTexColor.xxx * sssDiff.xyz; // 区域X
+                sssDiff.xyz = _ParamTexColor.xxx * sssDiff.xyz; 
                 sssDiff.xyz = sssDiff.xyz * _SSSDiffParam.x;
                 
-                float3 sssSkinColor1 = skinLightColor.xyz * _SSSDiffParam.y; // u_xlat16_29                
+                float3 sssSkinColor1 = skinLightColor.xyz * _SSSDiffParam.y;
 
              
-                float _SSSDiffParamW = _ParamTexColorZ * _SSSDiffParam.w; //u_xlat16_66
+                float _SSSDiffParamW = _ParamTexColorZ * _SSSDiffParam.w;
                 sssSkinColor1.xyz = sssSkinColor1.xyz * SSSlut1.xyz + float3(_SSSDiffParamW,_SSSDiffParamW,_SSSDiffParamW);
                 
 
@@ -279,9 +279,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 sssDiff.xyz = sssDiff.xyz * float3(0.25, 0.0, 0.0) + sssSkinColor1;
                 float3 diffuseParma2 = sssDiff.xyz;
                 
-                float3 diffuse = diffuseParam1 * diffuseParma2;
-                // diffuse = specular * float3(u_xlat55) + diffuse; // specular + diffuse;
-
+                float3 diffuse = diffuseParam1 * diffuseParma2;                
 // --------------------------Specular + diffuse ------------------------------
                 _FacialParams = float4(1.0,0.665,1.0,1.0);
                 float FacialControl = _BumpMapTex.z * _FacialParams.x;
@@ -365,6 +363,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 float3 specular = SpecParam1 * _ParamTexColor.yyy + specularParam2;                
               
                 diffuse =  diffuse + specular;
+                // diffuse = float3(0,0,0);
                 return float4(diffuse,1);
                 
             }

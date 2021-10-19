@@ -109,8 +109,10 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
 
             return uv;
         }
+        
         float3 ACESFilm(float3 x)
         {
+            _ToneMappingParam = float4(0,0,0,0);
             float a = _ToneMappingParam.x + 3.92000008;
             float b = _ToneMappingParam.y + 0.0399999991;
             float c = _ToneMappingParam.z + 2.6500001;
