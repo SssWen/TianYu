@@ -2,20 +2,23 @@
 Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
 {
     Properties
-    {
+    {   
         _MainColor ("Main Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" { }
         _BumpMap ("Normal", 2D) = "bump" { }
         _ParamTex ("SSSScale(R), SpecScale(G), AO(B)", 2D) = "white" { }
         _ParamTex2 ("Smoothness(R), DecalMask(B), MainColorMask(A)", 2D) = "white" { }
-        _LipCubeIntensity ("Lip Cube Intensity", Range(0, 1)) = 1
+        _LightTexture ("LightTexture", 2D) = "white" {}
+        // _LipCubeIntensity ("Lip Cube Intensity", Range(0, 1)) = 1
         // [Header(Facial)] _EyebrowMask ("Eyebrow Mask", 2D) = "black" { }
         // [Header(Misc)] _FaceMaskTex ("FaceMaskTex", 2D) = "white" { }
-        [PowerSlider(3.0)] _RimPower ("Glow Power", Range(0, 10)) = 1
-        _RimColor ("Glow Color", Color) = (0,0,0,1)
+        [PowerSlider(3.0)] _RimPower ("Glow Power", Range(0, 10)) = 0.5
+        _RimColor ("Glow Color", Color) = (0.04092, 0.07819, 0.11697, 1)
+        // [HDR]_MainLightColor ("_MainLightColor", Color) = (5.54975,5.54975,5.54975)
+        
         // _EyebrowTilingOffset ("EyebrowTilingOffset", Vector) = (1,1,0,0)
         // _EyebrowHSV ("Eyebrow HSV", Vector) = (0,0,1,0)
-        _FacialParams ("FacialParams x: LipSmoothnessFromNormal y: FacialLipSmoothness z: BlockMainColor, w: DecalEnableMask", Vector) = (1.0,0.665,1.0,1.0)  
+        // _FacialParams ("FacialParams x: LipSmoothnessFromNormal y: FacialLipSmoothness z: BlockMainColor, w: DecalEnableMask", Vector) = (1.0,0.665,1.0,1.0)  
     }
     SubShader
     {
@@ -24,6 +27,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
         Pass
         {
 			Tags { "LightMode"="UniversalForward" }
+            Cull back
             Blend One One
 			HLSLPROGRAM
             #pragma target 3.0
@@ -58,16 +62,23 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
             float4 _MainColor;
             // float4 _EyebrowTilingOffset;
             // float4 _EyebrowHSV;
-            float4 _FacialParams;
-            float _LipCubeIntensity;
+            // float4 _FacialParams;
+            // float _LipCubeIntensity;
             float _RimPower;
             float4 _RimColor;
+            float4 _SpotLightColor;
+            float4 _SpotLightDir;
+            // float4 _MainLightColor;
+            // float4 _LightPosition;
+            // float _SpotLightRange;
+            float4x4 _worldToLight;
 
             // sampler2D _FaceMaskTex;
             sampler2D _MainTex;
             sampler2D _BumpMap;
             sampler2D _ParamTex;
             sampler2D _ParamTex2;
+            sampler2D _LightTexture;
             // sampler2D _EyebrowMask;
                                 
             v2f vert (appdata v)
@@ -89,20 +100,13 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
             }
             
             float4 frag (v2f i) : SV_Target
-            {           
-                _MainColor.xyz = float3(1.321,1.321,1.321);
+            {
                 half3 albedo = tex2D(_MainTex, i.uv.xy).xyz;
-                albedo = albedo * _MainColor.xyz - albedo;
-                // albedo = wValue * albedo +albedo;
-                // return float4(_MainLightColor.xyz,1);
+               
                 half3 worldNormal = i.worldNormal;
                 half3 worldView = i.worldView;
                 worldView = normalize(worldView);
                 
-                
-
-             
-
                 half3 normalori = tex2D(_BumpMap, i.uv.xy).xyz;
                 
                 half3 normal;
@@ -112,34 +116,41 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
 
                 float3x3 rotation = float3x3(i.worldTangent, i.worldBinormal, i.worldNormal);
                 half3 bumpNormal = normalize(mul(normal, rotation));
-
-                half3 lightDir = _MainLightPosition.xyz - i.worldPos;
+// _SpotLightDir.xyz = _WorldSpaceCameraPos.xyz;
+                half3 lightDir = _SpotLightDir.xyz - i.worldPos;
                 lightDir = normalize(lightDir);
 
                 float LdotN = saturate(dot(lightDir, bumpNormal));
-                // float3 posLS = mul(unity_WorldToLight, i.worldPos);
-                float3 posLS = i.worldPos;
-                float poslengthPow = dot(posLS, posLS);
 
-                // half brightness = tex2D(_LightTexture0, float2(poslengthPow, poslengthPow)).x;
-                // half3 lightColor = brightness * _MainLightColor.xyz;
+                float4 posLS = mul(_worldToLight, float4(i.worldPos,1.0));
+                // float3 posLS = i.worldPos;
+                // posLS = normalize(posLS);
+                float poslengthPow = dot(posLS.xyz, posLS.xyz);
+                // return half4(poslengthPow,poslengthPow,poslengthPow, 1);
 
+                half brightness = tex2D(_LightTexture, float2(poslengthPow, poslengthPow)).x;
+                // return half4(brightness, brightness, brightness, 1.0);
+                // _MainLightColor.xyz = float3(5.54975,5.54975,5.54975);
+                _MainLightColor.xyz = _SpotLightColor.xyz;
+                // _MainLightColor.xyz = float3(5.54975,5.54975,5.54975);
+                half3 lightColor = brightness * _MainLightColor.xyz;
 
-                _MainLightColor.xyz = float3(5.54975,5.54975,5.54975);
-                half3 lightColor = 0.5 * _MainLightColor.xyz;
+                // half3 lightColor = 0.5 * _MainLightColor.xyz;
                 // lightColor *= _CharacterSkinColorScale.xyz;
                 half2 param2 = tex2D(_ParamTex, i.uv.xy).zw;
                 lightColor *= param2.x;
                 lightColor *= LdotN;
 
                 float BumpVdotN = saturate(dot(worldView, bumpNormal));
-                float remainBumpVdotN = 1.0 - BumpVdotN;
-                float value6 = remainBumpVdotN * 0.425000012;
-                value6 *= remainBumpVdotN;
-                value6 = pow(remainBumpVdotN, 2) + value6;
-                value6 *= param2.y;//Spec
-                value6 *= _RimPower;
-                half3 mixcolor1 = value6 * _RimColor.xyz;
+                float OneNdotV = 1.0 - BumpVdotN;                
+                
+                // float value6 = OneNdotV * OneNdotV * 0.425000012;
+                // value6 += OneNdotV*OneNdotV;
+                // value6 *= param2.y*_RimPower*_RimColor.xyz;//Spec                
+                // half3 mixcolor1 = value6 ;
+
+                half3 mixcolor1 = 1.425000012* OneNdotV * OneNdotV * param2.y*_RimPower*_RimColor.xyz;
+
                 half3 finalcolor = lightColor * albedo + mixcolor1;
 
                 return half4(finalcolor, 1.0);

@@ -26,14 +26,11 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
         _PoreTex ("Pore Tex", 2D) = "white" { }
         _SSSLightColor ("SSS Light Color", Vector) = (0.99216,0.89412,0.8941,1)
         // _SSSLightColor2 ("SSS Light Color Game", Vector) = (1,1,1,1)
-        _SSSSpecParam ("SSS Face Spec Param", Vector) = (1.35,8.126,0,2.0)
+        _SSSSpecParam ("SSS Face Spec Param", Vector) = (1.35,6,0,2.0)
         _SSSDiffParam ("SSS Face Diff Param", Vector) = (1.50,1.15,0,0.4)
-        _SSSPoreParam ("SSS Face Pore Param", Vector) = (1,1,1,1)
-        _SSSGameDiffParam1 ("SSS Body Diff Param1", Vector) = (0.2,0.6,0.1,1)
-        _SSSGameDiffParam2 ("SSS Body Diff Param2", Vector) = (0.4,0.4,2.5,1)
-        _SSSGameDiffParam3 ("SSS Body Diff Param1 Game", Vector) = (1.34,0.79,0.8,1.0)
-        _SSSGameDiffParam4 ("SSS Body Diff Param2 Game", Vector) = (0.31,0.1,5.0,0.8)
-        _SSSGameColorParam ("SSS Body Color Param", Color) = (0.25,0,0,0)
+        _SSSPoreParam ("SSS Face Pore Param", Vector) = (1.5,1,1,1)
+        _CharacterSkinColorScale ("_CharacterSkinColorScale", Vector) = (1,1,1,1)
+
         _RimColor ("Glow Color", Color) = (0,0,0,1)
         [PowerSlider(3.0)] _RimPower ("Glow Power", Range(0, 10)) = 1
         _RimColorGame ("Glow Color", Color) = (0,0,0,1)
@@ -43,47 +40,9 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
         // _EyebrowTilingOffset ("EyebrowTilingOffset", Vector) = (1,1,0,0)
         // _EyebrowHSV ("Eyebrow HSV", Vector) = (0,0,1,0)
         _FacialParams ("FacialParams x: LipSmoothnessFromNormal y: FacialLipSmoothness z: BlockMainColor, w: DecalEnableMask", Vector) = (1.0,0.665,1.0,1.0)
-        // [Header(Decal)] _DecalTex ("Decal Tex", 2D) = "black" { }
-        // _DecalNormalTex ("Decal Normal Tex", 2D) = "black" { }
-        // _DecalTypePara ("Decal Para", Vector) = (1,1,1,0)
-        // _DecalTransform ("Decal Transform", Vector) = (0,1,0,0)
-        // _DecalColor ("Decal Color", Color) = (1,1,1,1)
-        // [Header(SparkleSkin)] _StarMask ("_StarMask", 2D) = "black" { }
-        // _StarParamMouth ("Star Mouth Parameters", Vector) = (100,0.466,2.55,0.3)
-        // _StarParam2Mouth ("Star Mouth Parameters2", Vector) = (14,0.48,3.8,0)
-        // _StarParamEye ("Star Eye Parameters", Vector) = (100,0.466,2.55,0.3)
-        // _StarParamRightEye ("Star Eye Right Parameters", Vector) = (100,0.466,2.55,0.3)
-        // _StarParam2Eye ("Star Eye Parameters2", Vector) = (14,0.48,3.8,0)
-        // _StarParamFace ("Star Face Parameters", Vector) = (100,0.466,2.55,0.3)
-        // _StarParam2Face ("Star Face Parameters2", Vector) = (14,0.48,3.8,0)
-        // _ColorMouth ("Color Mouth", Color) = (1,1,1,1)
-        // _ColorEye ("Color Eye Left", Color) = (1,1,1,1)
-        // _ColorEyeRight ("Color Eye Right", Color) = (1,1,1,1)
-        _ColorFace ("Color Face", Color) = (1,1,1,1)
-        [Header(Rim)] _RimColorBlend ("Rim Color Blend", Color) = (1,1,1,1)
-        _RimColorAdd ("Rim Color Add", Color) = (1,1,1,1)
-        _RimCompositeParamsA ("Composite A", Vector) = (0,0,0,0)
-        _RimCompositeParamsB ("Composite B", Vector) = (0,0,0,0)
-        [Header(Dissolve)] _DissolveParam ("Dissolve Param", Vector) = (0,0.001,0,0)
-        _BurnParam ("Burn Param", Vector) = (1,0,0,0)
-        _BurnDissolveTex ("Dissolve Texture", 2D) = "white" { }
-        _BurnRamp ("Burn Ramp (RGB)", 2D) = "white" { }
-        // [Header(UFX)] [Toggle(_UNIVERSAL_FX_ON)] _UFX_ON ("UFX ON", Float) = 0
-        // __UFX_Color ("__UFX_Color", Color) = (1,1,1,1)
-        // __UFX_Alpha ("__UFX_Alpha", Float) = 1
-        // __UFX_Brightness ("__UFX_Brightness", Float) = 1
-        // _UFX_Color ("UFX Color", Vector) = (1,1,1,1)
-        // _UFX_Tex ("UFX Tex", 2D) = "white" { }
-        // _UFX_Ramp ("UFX Ramp", 2D) = "white" { }
-        // _UFX_Mask ("UFX Mask", 2D) = "white" { }
-        // _UFX_Params0 ("UFX Params0", Vector) = (0,0,0,0)
-        // _UFX_Params1 ("UFX Params1", Vector) = (0,0,0,0)
+     
         [Header(Misc)] _FaceMaskTex ("FaceMaskTex", 2D) = "white" { }
-        _HighlightColor ("Highlight Color", Color) = (0,0,0,0)
-        _SSSWrite ("sssWrite", Float) = 0
-        _LODFade ("_LODCrossFade", Vector) = (15,0,0,0)
-        _CharacterGameSpecColor ("_CharacterGameSpecColor", Color) = (1,1,1,1)
-        _DarkCharacterCtrl ("_DarkCharacterCtrl", Float) = 1
+
         
     }
     SubShader
@@ -127,9 +86,9 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             float4 _CharacterSkinColorScale;
             float4 _EyebrowTilingOffset;
             float4 _EyebrowHSV;
-            float4 _HighlightColor;
+            // float4 _HighlightColor;
             float _DarkCharacterScale;
-            float _DarkCharacterCtrl;
+            // float _DarkCharacterCtrl;
             float _AutoExposure;
             float _AutoExposure_Intensity;
             float _OutputAlpha;
@@ -153,11 +112,11 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             float4 _ColorFace;
             float4 _ColorMouth;
             float4 _SSSLightColor2;
-            float4 _CharacterGameSpecColor;
+            // float4 _CharacterGameSpecColor;
             float CharacterShadowAdd;
-            float4 _SSSGameDiffParam3;
-            float4 _SSSGameDiffParam4;
-            float4 _SSSGameColorParam;
+            // float4 _SSSGameDiffParam3;
+            // float4 _SSSGameDiffParam4;
+            // float4 _SSSGameColorParam;
             float4 _SSSSpecParam;
             float4 _SSSLightColor;
             float4 _DecalTex_ST;
@@ -169,6 +128,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             float _RimPowerGame;
             float4 _SSSDiffParam;
             float4 _SSSPoreParam;
+            
 
 
             sampler2D _FaceMaskTex;
@@ -222,8 +182,8 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
             float4 frag (v2f i) : SV_Target
             {                 
                 
-                _SSSDiffParam = float4(1.50,1.15,0,0.4);
-                _SSSSpecParam = float4(1.35,8.126,0,2.0);
+                
+                
                 float3 worldPos = float3(i.TtoW0.w,i.TtoW1.w,i.TtoW2.w);
                 // float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos);
                 // Light light = GetMainLight();
@@ -236,7 +196,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 float4 Normal = tex2D(_BumpMap, i.uv.xy); //xy normal, z mask w mask
                 float4 _BumpMapTex = Normal;
 
-                _SSSPoreParam.x = 1.5;
+                // _SSSPoreParam.x = 1.5;
                 float2 poreUV  = i.uv.xy * _SSSPoreParam.x;
                 poreUV = poreUV * float2(10.0, 10.0);
                 float4 PoreTexColor = tex2D(_PoreTex, poreUV);
@@ -251,13 +211,15 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 float3 normal_1 = float3(Normal.xy,1.0);
                 float3 worldNormal = normalize(half3(dot(i.TtoW0.xyz, normal_1), dot(i.TtoW1.xyz, normal_1), dot(i.TtoW2.xyz, normal_1)));
                 _CharacterLightDir.xyz = float3(-0.09052,0.44179,0.89254);
+                _CharacterLightDir.xyz = _MainLightPosition.xyz;
+                _CharacterLightDir.xyz = normalize(_CharacterLightDir.xyz);
                 float LdotN = saturate(dot(_CharacterLightDir.xyz, worldNormal));
                 float2 lutXY = float2(LdotN*0.5+0.5,0.0);
 
                 float3 eyeBrow = float3(0,0,0);
                 float3 diffuseParam1 = eyeBrow + mainColor;
-                _CharacterSkinColorScale.xyz = float3(1,1,1);
-                _SSSLightColor.xyz = float3(0.99216,0.89412,0.8941);
+                
+                
                 float3 skinLightColor = _CharacterSkinColorScale.xyz * _SSSLightColor.xyz; 
             
                 float _ParamTexColorZ = _ParamTexColor.z * 0.636900008;
@@ -279,9 +241,10 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
                 sssDiff.xyz = sssDiff.xyz * float3(0.25, 0.0, 0.0) + sssSkinColor1;
                 float3 diffuseParma2 = sssDiff.xyz;
                 
-                float3 diffuse = diffuseParam1 * diffuseParma2;                
+                float3 diffuse = diffuseParam1 * diffuseParma2;     
+
 // --------------------------Specular + diffuse ------------------------------
-                _FacialParams = float4(1.0,0.665,1.0,1.0);
+                
                 float FacialControl = _BumpMapTex.z * _FacialParams.x;
                                 
                 FacialControl = FacialControl * (_FacialParams.y - mainTexColor.w) + mainTexColor.w; // specularW
@@ -300,7 +263,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkin1"
 
 
                 float3 facePore1 = facePore.x * float3(1.0, 0.5, 0.25);
-                float3 facePore2 = facePore.y * float3(0.0, 0.25, 0.300000012);    
+                float3 facePore2 = facePore.y * float3(0.0, 0.25, 0.300000012);
                 
                 float VdotNN2 = (1.0 - VdotN)*(1.0 - VdotN);
                 float3 faceP = (-facePore.x) * float3(1.0, 0.5, 0.25) + float3(0.5, 0.5, 0.5);
