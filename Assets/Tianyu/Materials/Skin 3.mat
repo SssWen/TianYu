@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skin 2
+  m_Name: Skin 3
   m_Shader: {fileID: 4800000, guid: 1cafce7c30e283d47b9dded185d8928c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -20,29 +20,27 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 419e902a53dae4042910c964ee8618f5, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LightTexture:
-        m_Texture: {fileID: 2800000, guid: c5cf3d56502b19e4eb12e2f8bbdfc22a, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ec4478544502bac42a85c69c014350a6, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParamTex:
-        m_Texture: {fileID: 2800000, guid: edf90d061e9919541a900f0ac13a3e50, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParamTex2:
-        m_Texture: {fileID: 2800000, guid: e759d933e6ca37b4bb6a41a8788aeffe, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _RimPower: 0.5
     m_Colors:
-    - _MainColor: {r: 0.6509434, g: 0.34082413, b: 0.34082413, a: 1}
-    - _MainLightColor: {r: 5.54975, g: 5.54975, b: 5.54975, a: 1}
+    - _MainColor: {r: 5.549, g: 5.549, b: 5.549, a: 1}
     - _RimColor: {r: 0.040919982, g: 0.07818998, b: 0.11696998, a: 1}
-    - _SecondLightColor: {r: 0.8452686, g: 0.68179685, b: 0.68179685, a: 1}

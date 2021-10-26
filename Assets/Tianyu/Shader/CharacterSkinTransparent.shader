@@ -3,7 +3,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
 {
     Properties
     {   
-        _MainColor ("Main Color", Color) = (1,1,1,1)
+        [HDR]_SecondLightColor ("第二盏灯光颜色Second Light Color", Color) = (5.549,5.549,5.549,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" { }
         _BumpMap ("Normal", 2D) = "bump" { }
         _ParamTex ("SSSScale(R), SpecScale(G), AO(B)", 2D) = "white" { }
@@ -59,7 +59,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
 			    float3 worldView        : TEXCOORD6;
             };
 
-            float4 _MainColor;
+            float4 _SecondLightColor;
             // float4 _EyebrowTilingOffset;
             // float4 _EyebrowHSV;
             // float4 _FacialParams;
@@ -132,6 +132,7 @@ Shader "Low/Tianyu Shaders/Character/CharacterSkinTransparent"
                 // return half4(brightness, brightness, brightness, 1.0);
                 // _MainLightColor.xyz = float3(5.54975,5.54975,5.54975);
                 _MainLightColor.xyz = _SpotLightColor.xyz;
+                _MainLightColor.xyz = _SecondLightColor.xyz;
                 // _MainLightColor.xyz = float3(5.54975,5.54975,5.54975);
                 half3 lightColor = brightness * _MainLightColor.xyz;
 
